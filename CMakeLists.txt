@@ -8,12 +8,18 @@ else()
 endif()
 
 # boost dependensies
-find_package(Boost COMPONENTS program_options unit_test_framework REQUIRED)
+find_package(Boost COMPONENTS
+        program_options
+        unit_test_framework
+        filesystem
+        REQUIRED)
 
 # source
 set(SOURCE
-        file_scanner.cpp file_scanner.h
         file_hasher.cpp file_hasher.h
+        file_cmp.cpp file_cmp.h
+        file_utils.cpp file_utils.h
+        hasher.cpp hasher.h
 )
 set(EXE_SOURCE main.cpp ${SOURCE})
 set(TEST_SOURCE test_fs.cpp ${SOURCE})

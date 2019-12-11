@@ -1,27 +1,42 @@
 #include "file_hasher.h"
 
-#include <exception>
-#include <algorithm>
-#include <boost/container_hash/hash.hpp>
-
 using namespace std;
 
-Hash FileHasher::getNextBlock() {
-    if (is_end) {
-        throw runtime_error("End of file");
+Hash FileHasher::getNext() {
+    Block b(block_size_);
+    std::fill(b.begin(), b.end(), 0);
+    std::size_t readed = 0;
+    while (in_ && readed < block_size_) {
+        in_.read(b.data() + readed, 1);
+        ++readed;
     }
-    if (!in_) {
-        in_.open(filename_, ios::binary);
+    return hasher_(b);
+}
+
+std::optional<Hash> FileHasher::operator[](std::size_t idx) {
+    if (idx < blocks_cache_.size()) {
+        return blocks_cache_[idx];
     }
-    if (!in_) {
-        throw invalid_argument("Can't open file " + filename_);
+    blocks_cache_.reserve(idx + 1);
+    while (blocks_cache_.size() <= idx && hasNext()) {
+        blocks_cache_.push_back(getNext());
     }
 
-    char* block = new char[block_size_];
-    fill(block, block + block_size_, 0);
-
-    if (in_.read(block, block_size_)) {
-        //return boost::hash<char*>{}(block);
+    if (blocks_cache_.size() == idx+1) {
+        return blocks_cache_[idx];
+    } else {
+        return nullopt;
     }
-    return 0;
+}
+
+bool operator==(FileHasher &lhs, FileHasher &rhs) {
+    bool res = true;
+    for (size_t i = 0; lhs[i].has_value() && rhs[i].has_value(); ++i) {
+        if (*lhs[i] != *rhs[i]) {
+            res = false;
+            break;
+        }
+    }
+    if (res && lhs.hasNext() != rhs.hasNext()) res = false;
+    return res;
 }
