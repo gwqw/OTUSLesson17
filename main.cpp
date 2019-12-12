@@ -6,7 +6,7 @@
 #include "file_utils.h"
 #include "hasher.h"
 
-//#define TEST
+#define TEST
 
 using namespace std;
 namespace opt = boost::program_options;
@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
         auto hasher = makeHasher(hashType);
 
         // output
-#ifdef TEST
+#ifdef TEST1
         cout << "Input file list: \n";
         for (const auto& f : files) {
             cout << f << endl;

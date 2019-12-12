@@ -18,31 +18,29 @@ public:
         if (block_size_ == 0) {
             block_size_ = 1;
         }
-        in_.rdbuf()->pubsetbuf(nullptr, 0);
-        in_.open(filename_, std::ios::binary|std::ios_base::in);
+        //in_.rdbuf()->pubsetbuf(nullptr, 0);
     }
     FileHasher(const FileHasher&) = delete;
     FileHasher(FileHasher&&) = default;
     FileHasher& operator=(const FileHasher&) = delete;
     FileHasher& operator=(FileHasher&&) = delete; // because of IHasher&
 
-    bool hasNext() const {
-        return static_cast<bool>(in_);
-    }
-
     std::optional<Hash> operator[](std::size_t idx);
 
     const std::string& getFileName() const {return filename_;}
 
+    std::size_t getFileSize();
+
 private:
     std::string filename_;
-    std::ifstream in_;
+    //std::ifstream in_;
     std::size_t block_size_ = 1;
     std::vector<Hash> blocks_cache_;
     IHasher& hasher_;
+    std::optional<std::size_t> file_size_;
 
     // methods
-    Hash getNext();
+    Hash getNext(std::ifstream& in);
     Hash getFullHash() const {
         return boost::hash<std::vector<Hash>>{}(blocks_cache_);
     }
