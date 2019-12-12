@@ -1,5 +1,7 @@
 #include "hasher.h"
 
+#include <boost/crc.hpp>
+
 using namespace std;
 
 Hash Crc32Hasher::operator()(const std::vector<char>& v) {
@@ -21,13 +23,19 @@ HasherHolder makeHasher(HashType hash_type) {
     }
 }
 
-Hash Md5Hasher::operator()(const std::vector<char> &v) {
-    MD5_CTX md5handler;
-    unsigned char md5digest[MD5_DIGEST_LENGTH];
+Md5Hasher::hash_t Md5Hasher::operator()(const std::vector<char> &v) {
+    using boost::uuids::detail::md5;
 
-    MD5_Init(&md5handler);
-    MD5_Update(&md5handler, v.data(), v.size());
-    MD5_Final(md5digest, &md5handler);
+    md5 hash;
+    md5::digest_type md5digest;
 
-    return 0; //md5digest;
+    hash.process_bytes(v.data(), v.size());
+    hash.get_digest(md5digest);
+
+    hash_t res;
+    for (size_t i = 0; i < sizeof(md5::digest_type); ++i) {
+        res[i] = md5digest[i];
+    }
+
+    return res;
 }

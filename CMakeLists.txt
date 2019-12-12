@@ -14,8 +14,6 @@ find_package(Boost COMPONENTS
         filesystem
         REQUIRED)
 
-find_package(OpenSSL REQUIRED)
-
 # source
 set(SOURCE
         file_hasher.cpp file_hasher.h
@@ -62,13 +60,11 @@ target_include_directories(${TEST_NAME}
 
 target_include_directories(${EXE_NAME}
         PRIVATE ${Boost_INCLUDE_DIR}
-        PRIVATE ${OPENSSL_INCLUDE_DIR}
 )
 
 # target linking
 target_link_libraries(${EXE_NAME}
     ${Boost_LIBRARIES}
-    ${OPENSSL_LIBRARIES}
 )
 
 target_link_libraries(${TEST_NAME}
