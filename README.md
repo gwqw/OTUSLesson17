@@ -5,7 +5,7 @@
 
 ## Description
 
-**bayan** is utility for searching identical files.
+**bayan** is utility for searching identical files. It outputs identical files divided into groups. 
 
 
 
@@ -17,6 +17,8 @@
 
 -H, --hash			hash type: *boost*, *crc32*, *md5*
 
--f,  --files			  list of files to search identical (can be set without -f)	
+-f, --files				list  of files to search identical (can be set without -f)
+
+-d,  --dir				get files from set dir recursive (-f is ignored)
 
 **Example**: `bayan -b 3 -H crc32 file1.txt file2.txt file3.txt `

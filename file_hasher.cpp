@@ -17,14 +17,17 @@ std::optional<Hash> FileHasher::operator[](std::size_t idx) {
     if (idx < blocks_cache_.size()) {
         return blocks_cache_[idx];
     }
+    if (!hasNext()) return nullopt;
+
     blocks_cache_.reserve(idx + 1);
     while (blocks_cache_.size() <= idx && hasNext()) {
         blocks_cache_.push_back(getNext());
     }
 
-    if (blocks_cache_.size() == idx+1) {
+    if (idx < blocks_cache_.size()) {
         return blocks_cache_[idx];
     } else {
+        in_.close();
         return nullopt;
     }
 }
