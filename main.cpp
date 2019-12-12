@@ -59,6 +59,7 @@ int main(int argc, char* argv[]) {
 
         make_full_paths(files);
         remove_non_valid_paths(files);
+        sort_names_and_remove_duplic(files);
         auto hasher = makeHasher(hashType);
 
         // output

@@ -20,3 +20,14 @@ HasherHolder makeHasher(HashType hash_type) {
             throw runtime_error("Unknown hash type");
     }
 }
+
+Hash Md5Hasher::operator()(const std::vector<char> &v) {
+    MD5_CTX md5handler;
+    unsigned char md5digest[MD5_DIGEST_LENGTH];
+
+    MD5_Init(&md5handler);
+    MD5_Update(&md5handler, v.data(), v.size());
+    MD5_Final(md5digest, &md5handler);
+
+    return 0; //md5digest;
+}

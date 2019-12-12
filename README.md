@@ -19,3 +19,4 @@
 
 -f,  --files			  list of files to search identical (can be set without -f)	
 
+**Example**: `bayan -b 3 -H crc32 file1.txt file2.txt file3.txt `

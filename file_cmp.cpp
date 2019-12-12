@@ -10,8 +10,8 @@ CompareFiles::DuplicateList CompareFiles::compare(const std::vector<std::string>
         return {};
     }
 
-    unordered_map<Hash, vector<FileHasher>> first_byte_hash_to_filehash{};
-    std::unordered_set<std::string> empty_files{};
+    unordered_map<Hash, vector<pair<int, FileHasher>>> first_byte_hash_to_filehash{};
+    DuplicateGroup empty_files{};
     DuplicateList duplicates{};
 
     for (const auto& cur_fname : files) {
@@ -26,36 +26,31 @@ CompareFiles::DuplicateList CompareFiles::compare(const std::vector<std::string>
         // select filehashes with the same first byte hash
         // and compare with them
         // if true: add to duplicates
-        // add cur file_hash to first_byte_hash
+        // add cur file_hash to first_byte_hash if unique
+        constexpr int NOT_IN_GROUP = -1;
         auto fb_hash = *fb_hash_opt;
         auto& file_hashers =  first_byte_hash_to_filehash[fb_hash];
-        for (auto& fh : file_hashers) {
+        bool isFound = false;
+        for (auto& [group_idx, fh] : file_hashers) {
             if (cur_fh == fh) {
-                insertDuplicates(duplicates, fh.getFileName(), cur_fname);
+                if (group_idx != NOT_IN_GROUP) {
+                    duplicates[group_idx].insert(cur_fname);
+                } else {
+                    group_idx = duplicates.size();
+                    duplicates.push_back({fh.getFileName(), cur_fname});
+                }
+                isFound = true;
+                break;
             }
         }
-        file_hashers.push_back(move(cur_fh));
+        if (!isFound) {
+            file_hashers.emplace_back(NOT_IN_GROUP, (move(cur_fh)));
+        }
     }
-
     // add empty file list
     if (!empty_files.empty()) {
         duplicates.push_back(move(empty_files));
     }
     return duplicates;
-}
-
-void CompareFiles::insertDuplicates(CompareFiles::DuplicateList& duplicates,
-        const std::string& fname1, const std::string& fname2) {
-    bool is_found = false;
-    for (auto& s : duplicates) {
-        if (s.count(fname1)) {
-            s.insert(fname2);
-            is_found = true;
-            break;
-        }
-    }
-    if (!is_found) {
-        duplicates.push_back({fname1, fname2});
-    }
 }
 

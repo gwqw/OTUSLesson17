@@ -4,6 +4,7 @@
 #include <memory>
 #include <boost/crc.hpp>
 #include <boost/container_hash/hash.hpp>
+#include <openssl/md5.h>
 
 using Hash = std::size_t;
 enum class HashType {Boost, CRC32, MD5};
@@ -23,6 +24,11 @@ private:
 };
 
 class Crc32Hasher : public IHasher {
+public:
+    Hash operator()(const std::vector<char>& v) override;
+};
+
+class Md5Hasher : public IHasher {
 public:
     Hash operator()(const std::vector<char>& v) override;
 };

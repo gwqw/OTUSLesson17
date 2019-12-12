@@ -32,10 +32,6 @@ public:
 
     std::optional<Hash> operator[](std::size_t idx);
 
-    Hash getFullHash() const {
-        return boost::hash<std::vector<Hash>>{}(blocks_cache_);
-    }
-
     const std::string& getFileName() const {return filename_;}
 
 private:
@@ -44,10 +40,12 @@ private:
     std::size_t block_size_ = 1;
     std::vector<Hash> blocks_cache_;
     IHasher& hasher_;
-    std::optional<Hash> fullHash_;
 
     // methods
     Hash getNext();
+    Hash getFullHash() const {
+        return boost::hash<std::vector<Hash>>{}(blocks_cache_);
+    }
 };
 
 bool operator==(FileHasher& lhs, FileHasher& rhs);

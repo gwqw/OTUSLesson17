@@ -20,3 +20,8 @@ void remove_non_valid_paths(std::vector<std::string>& files) {
             files.end()
     );
 }
+
+void sort_names_and_remove_duplic(std::vector<std::string>& files) {
+    sort(files.begin(), files.end());
+    files.erase(unique(files.begin(), files.end()), files.end());
+}
