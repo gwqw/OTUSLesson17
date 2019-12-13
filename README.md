@@ -1,24 +1,27 @@
-# OTUSLesson17
-**bayan** -- solution to lesson 17 homework otus.ru (task 09)
-
-
+# Bayan
+(![Build Status](https://travis-ci.org/gwqw/OTUSLesson17.svg?branch=master))
 
 ## Description
 
 **bayan** is utility for searching identical files. It outputs identical files divided into groups. 
 
-
-
 ## Start parameters for bayan
 
+```bash
 -h, --help			Help output
+-b, --blocksize	block size (bytes) used to compare files (default = 1)
+-H, --hash			hash type: *boost*, *crc32*
+-f, --files			file list to find duplicates (can be set without option `-f`)
+-d,  --dir			file list will be obtained from the specified directory recursively (-f is ignored)
+```
 
--b, --blocksize	block size (bytes) to scan for files compare (default = 1)
+**Examples**: 
 
--H, --hash			hash type: *boost*, *crc32*, *md5*
+`bayan -b 4096 -H crc32 file1.txt file2.txt file3.txt`
+`bayan -b 10240 -H boost -d /home/username/`
+`bayan -b 4096` - scan current directory for duplicates
 
--f, --files				list  of files to search identical (can be set without -f)
 
--d,  --dir				get files from set dir recursive (-f is ignored)
+## Dependencies
 
-**Example**: `bayan -b 3 -H crc32 file1.txt file2.txt file3.txt `
+* boost libraries (crc, container hash, program options, filesystem)
