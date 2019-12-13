@@ -21,6 +21,7 @@ HasherHolder makeHasher(HashType hash_type) {
     }
 }
 
+#ifdef MD5
 Md5Hasher::hash_t Md5Hasher::operator()(const std::vector<char> &v) {
     using boost::uuids::detail::md5;
 
@@ -37,3 +38,4 @@ Md5Hasher::hash_t Md5Hasher::operator()(const std::vector<char> &v) {
 
     return res;
 }
+#endif
