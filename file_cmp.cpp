@@ -16,7 +16,7 @@ CompareFiles::DuplicateList CompareFiles::compare(const std::vector<std::string>
         return {};
     }
 
-    unordered_map<Hash, vector<pair<int, FileHasher>>> first_byte_hash_to_filehash{};
+    unordered_map<Hash, vector<pair<int, FileHasher>>> size_to_filehash{};
     DuplicateGroup empty_files{};
     DuplicateList duplicates{};
 
@@ -26,19 +26,18 @@ CompareFiles::DuplicateList CompareFiles::compare(const std::vector<std::string>
 #endif
         FileHasher cur_fh(cur_fname, block_size_, hasher_);
         // file is empty
-        auto fb_hash_opt = cur_fh[0];
-        if (!fb_hash_opt) {
+        auto cur_size = cur_fh.getFileSize();
+        if (cur_size == 0) {
             empty_files.insert(cur_fname);
             continue;
         }
         // Algo:
-        // select filehashes with the same first byte hash
+        // select filehashes with the same size
         // and compare with them
         // if true: add to duplicates
-        // add cur file_hash to first_byte_hash if unique
+        // add cur file_hash to size_to_filehash if unique
         constexpr int NOT_IN_GROUP = -1;
-        auto fb_hash = *fb_hash_opt;
-        auto& file_hashers =  first_byte_hash_to_filehash[fb_hash];
+        auto& file_hashers =  size_to_filehash[cur_size];
         bool isFound = false;
         for (auto& [group_idx, fh] : file_hashers) {
             if (cur_fh == fh) {
