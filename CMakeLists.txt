@@ -88,7 +88,5 @@ set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 include(CPack)
 
 # tests
-if (USE_TEST)
-    enable_testing()
-    add_test(${TEST_NAME} ${TEST_NAME})
-endif()
+enable_testing()
+add_test(${TEST_NAME} ${TEST_NAME})
