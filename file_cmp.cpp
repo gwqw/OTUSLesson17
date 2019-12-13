@@ -16,7 +16,7 @@ CompareFiles::DuplicateList CompareFiles::compare(const std::vector<std::string>
         return {};
     }
 
-    unordered_map<Hash, vector<pair<int, FileHasher>>> size_to_filehash{};
+    unordered_map<size_t, vector<pair<int, FileHasher>>> size_to_filehash{};
     DuplicateGroup empty_files{};
     DuplicateList duplicates{};
 
