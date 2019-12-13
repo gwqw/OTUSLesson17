@@ -6,7 +6,7 @@
 #include "file_utils.h"
 #include "hasher.h"
 
-#define TEST
+//#define TEST
 
 using namespace std;
 namespace opt = boost::program_options;
@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
         desc.add_options()
                 ("help,h", "This screen")
                 ("blocksize,b", opt::value<int>()->default_value(1), "Block size")
-                ("hash,H", opt::value<std::string>(), "Hash type: boost, crc32, md5")
+                ("hash,H", opt::value<std::string>(), "Hash type: boost, crc32")
                 ("dir,d", opt::value<std::string>(), "Directory, where to search duplicates (recursive search)")
                 ("files,f", opt::value<std::vector<std::string>>()->multitoken()->
                         zero_tokens()->composing(), "files to scan, can be used without -f ");
@@ -46,20 +46,20 @@ int main(int argc, char* argv[]) {
         if (vm.count("dir")) {
             files = getFileListRecursive(vm["dir"].as<std::string>());
 #ifdef TEST
-            cout << "Found " << files.size() << " files" << endl;
+            cerr << "Found " << files.size() << " files" << endl;
 #endif
         } else if (vm.count("files")) {
             files = vm["files"].as<std::vector<std::string>>();
             make_full_paths(files);
             remove_non_valid_paths(files);
             sort_names_and_remove_duplic(files);
+        } else {
+            files = getFileListRecursive("");
         }
         if (vm.count("hash")) {
             string h = vm["hash"].as<std::string>();
             if (h == "crc32") {
                 hashType = HashType::CRC32;
-            } else if (h == "md5") {
-                hashType = HashType::MD5;
             } else if (h == "boost") {
                 //hashType is already HashType::Boost;
             } else {

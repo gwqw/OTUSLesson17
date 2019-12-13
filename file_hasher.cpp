@@ -2,43 +2,57 @@
 
 using namespace std;
 
-Hash FileHasher::getNext(std::ifstream& in) {
-    Block b(block_size_);
-    std::fill(b.begin(), b.end(), 0);
-    std::size_t readed = 0;
-    while (in && readed < block_size_) {
-        in.read(b.data() + readed, 1);
-        ++readed;
+// Block File
+void FileHasher::BlockFile::shift(std::size_t blocks_num) {
+    if (blocks_num > readed_blocks) {
+        std::size_t new_pos = (blocks_num - readed_blocks) * block_size_;
+        in_.seekg(new_pos);
+        readed_blocks = blocks_num;
     }
-    return hasher_(b);
 }
 
-std::optional<Hash> FileHasher::operator[](std::size_t idx) {
-    if (idx < blocks_cache_.size()) {
-        return blocks_cache_[idx];
+FileHasher::Block FileHasher::BlockFile::read() {
+    Block b(block_size_);
+    std::fill(b.begin(), b.end(), 0);
+    if ((readed_blocks + 1) * block_size_ < file_size_) {
+        in_.read(b.data(), block_size_);
+    } else {
+        std::size_t readed = 0;
+        while (in_ && readed < block_size_) {
+            in_.read(b.data() + readed, 1);
+            ++readed;
+        }
+        ++readed_blocks;
     }
-    if (idx * block_size_>= getFileSize()) {
+    return b;
+}
+
+// FileHasher
+std::optional<Hash> FileHasher::readBlock(std::size_t block_num,
+        FileHasher::BlockFile &blockFile) {
+    if (block_num < blocks_cache_.size()) {
+        return blocks_cache_[block_num];
+    }
+    if (block_num * block_size_ >= getFileSize() || !blockFile.is_valid()) {
         return nullopt;
     }
 
-    std::ifstream in;
-    in.rdbuf()->pubsetbuf(nullptr, 0);
-    in.open(filename_, std::ios::binary|std::ios_base::in);
-    in.seekg(blocks_cache_.size() * block_size_);
-    if (!in) {
-        return nullopt;
+    blockFile.shift(blocks_cache_.size());
+    //blocks_cache_.reserve(block_num + 1);
+    while (blocks_cache_.size() <= block_num && blockFile.is_valid()) {
+        blocks_cache_.push_back(hasher_(blockFile.read()));
     }
 
-    blocks_cache_.reserve(idx + 1);
-    while (blocks_cache_.size() <= idx && in) {
-        blocks_cache_.push_back(getNext(in));
-    }
-
-    if (idx < blocks_cache_.size()) {
-        return blocks_cache_[idx];
+    if (block_num < blocks_cache_.size()) {
+        return blocks_cache_[block_num];
     } else {
         return nullopt;
     }
+}
+
+std::optional<Hash> FileHasher::operator[](std::size_t idx) {
+    auto block_file = getBlockFile();
+    return readBlock(idx, block_file);
 }
 
 std::size_t FileHasher::getFileSize() {
@@ -58,7 +72,11 @@ bool operator==(FileHasher &lhs, FileHasher &rhs) {
         return false;
     }
     bool res = true;
-    for (size_t i = 0; lhs[i].has_value() && rhs[i].has_value(); ++i) {
+    auto lsh_bfh = lhs.getBlockFile();
+    auto rsh_bfh = rhs.getBlockFile();
+    for (size_t i = 0;
+        lhs.readBlock(i, lsh_bfh).has_value() && rhs.readBlock(i, rsh_bfh).has_value();
+        ++i) {
         if (*lhs[i] != *rhs[i]) {
             res = false;
             break;
@@ -66,3 +84,4 @@ bool operator==(FileHasher &lhs, FileHasher &rhs) {
     }
     return res;
 }
+

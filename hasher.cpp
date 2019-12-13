@@ -16,8 +16,6 @@ HasherHolder makeHasher(HashType hash_type) {
             return make_unique<BoostHasher>();
         case HashType::CRC32:
             return make_unique<Crc32Hasher>();
-        case HashType::MD5:
-            throw runtime_error("This hash type is unrealized yet");
         default:
             throw runtime_error("Unknown hash type");
     }

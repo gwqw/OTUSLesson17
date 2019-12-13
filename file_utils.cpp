@@ -28,8 +28,13 @@ void sort_names_and_remove_duplic(std::vector<std::string>& files) {
 }
 
 std::vector<std::string> getFileListRecursive(const std::string& path_name) {
-    if (!fs::exists(path_name)) return {};
-    fs::path parent_path(path_name);
+    fs::path parent_path;
+    if (!path_name.empty()) {
+        if (!fs::exists(path_name)) return {};
+        parent_path = fs::path(path_name);
+    } else {
+        parent_path = fs::current_path();
+    }
     vector<string> res;
     try {
         for (const auto& p : fs::recursive_directory_iterator(parent_path)) {

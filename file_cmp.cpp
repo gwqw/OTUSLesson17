@@ -3,6 +3,12 @@
 #include <utility>
 #include <unordered_map>
 
+//# define TEST
+
+#ifdef TEST
+#include <iostream>
+#endif
+
 using namespace std;
 
 CompareFiles::DuplicateList CompareFiles::compare(const std::vector<std::string> &files) {
@@ -15,6 +21,9 @@ CompareFiles::DuplicateList CompareFiles::compare(const std::vector<std::string>
     DuplicateList duplicates{};
 
     for (const auto& cur_fname : files) {
+#ifdef TEST
+        cerr << cur_fname << endl;
+#endif
         FileHasher cur_fh(cur_fname, block_size_, hasher_);
         // file is empty
         auto fb_hash_opt = cur_fh[0];
