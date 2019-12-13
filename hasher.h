@@ -7,7 +7,7 @@
 #if  BOOST_VERSION >= 106700
 #include <boost/container_hash/hash.hpp>
 #else
-#include <boost/function/hash.hpp>
+#include <boost/functional/hash.hpp>
 #endif
 
 //#define MD5
