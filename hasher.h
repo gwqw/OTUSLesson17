@@ -6,7 +6,7 @@
 
 #if  BOOST_VERSION >= 106700
 #include <boost/container_hash/hash.hpp>
-#elif
+#else
 #include <boost/function/hash.hpp>
 #endif
 
