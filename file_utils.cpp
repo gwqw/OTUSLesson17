@@ -48,3 +48,7 @@ std::vector<std::string> getFileListRecursive(const std::string& path_name) {
     }
     return res;
 }
+
+std::size_t get_file_size(const std::string& filename) {
+    return fs::file_size(fs::path(filename));
+}

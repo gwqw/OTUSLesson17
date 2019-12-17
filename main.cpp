@@ -47,6 +47,9 @@ int main(int argc, char* argv[]) {
             files = getFileListRecursive(vm["dir"].as<std::string>());
 #ifdef TEST
             cerr << "Found " << files.size() << " files" << endl;
+            for (const auto& filename : files) {
+                cerr << filename << " = " << get_file_size(filename) << endl;
+            }
 #endif
         } else if (vm.count("files")) {
             files = vm["files"].as<std::vector<std::string>>();

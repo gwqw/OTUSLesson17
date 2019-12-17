@@ -1,5 +1,7 @@
 #include "file_hasher.h"
 
+#include "file_utils.h"
+
 using namespace std;
 
 // Block File
@@ -59,11 +61,7 @@ std::size_t FileHasher::getFileSize() {
     if (file_size_) {
         return *file_size_;
     }
-    std::ifstream in;
-    in.rdbuf()->pubsetbuf(nullptr, 0);
-    in.open(filename_, std::ios::binary|std::ios_base::in);
-    in.seekg(0, std::ios::end);
-    file_size_ = in.tellg();
+    file_size_ = get_file_size(filename_);
     return *file_size_;
 }
 
