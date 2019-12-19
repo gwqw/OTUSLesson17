@@ -1,16 +1,17 @@
 #pragma once
 
-#include <vector>
 #include <string>
-#include <unordered_set>
+#include <vector>
+#include <boost/unordered_set.hpp>
+#include <boost/container/vector.hpp>
 
 #include "file_hasher.h"
 #include "hasher.h"
 
 class CompareFiles {
 public:
-    using DuplicateGroup = std::unordered_set<std::string>;
-    using DuplicateList = std::vector<DuplicateGroup>;
+    using DuplicateGroup = boost::unordered_set<std::string>;
+    using DuplicateList = boost::container::vector<DuplicateGroup>;
     explicit CompareFiles(std::size_t block_size, IHasher& hasher)
         : block_size_(block_size), hasher_(hasher) {}
     DuplicateList compare(const std::vector<std::string>& files);

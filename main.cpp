@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <boost/program_options.hpp>
 
 #include "file_cmp.h"

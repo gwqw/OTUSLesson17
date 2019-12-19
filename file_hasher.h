@@ -1,9 +1,9 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include <fstream>
-#include <optional>
+#include <vector>
+#include <boost/optional.hpp>
 
 #include "hasher.h"
 
@@ -48,8 +48,8 @@ public:
     FileHasher& operator=(const FileHasher&) = delete;
     FileHasher& operator=(FileHasher&&) = delete; // because of IHasher&
     // access
-    std::optional<Hash> operator[](std::size_t idx);
-    std::optional<Hash> readBlock(std::size_t block_num, BlockFile& blockFile);
+    boost::optional<Hash> operator[](std::size_t idx);
+    boost::optional<Hash> readBlock(std::size_t block_num, BlockFile& blockFile);
     // getters
     [[nodiscard]] const std::string& getFileName() const {return filename_;}
     std::size_t getFileSize();
@@ -62,7 +62,7 @@ private:
     std::size_t block_size_ = 1;
     std::vector<Hash> blocks_cache_;
     IHasher& hasher_;
-    std::optional<std::size_t> file_size_;
+    boost::optional<std::size_t> file_size_;
 };
 
 bool operator==(FileHasher& lhs, FileHasher& rhs);

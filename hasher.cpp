@@ -20,22 +20,3 @@ HasherHolder makeHasher(HashType hash_type) {
             throw runtime_error("Unknown hash type");
     }
 }
-
-#ifdef MD5
-Md5Hasher::hash_t Md5Hasher::operator()(const std::vector<char> &v) {
-    using boost::uuids::detail::md5;
-
-    md5 hash;
-    md5::digest_type md5digest;
-
-    hash.process_bytes(v.data(), v.size());
-    hash.get_digest(md5digest);
-
-    hash_t res;
-    for (size_t i = 0; i < sizeof(md5::digest_type); ++i) {
-        res[i] = md5digest[i];
-    }
-
-    return res;
-}
-#endif

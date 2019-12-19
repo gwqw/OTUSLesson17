@@ -30,13 +30,13 @@ FileHasher::Block FileHasher::BlockFile::read() {
 }
 
 // FileHasher
-std::optional<Hash> FileHasher::readBlock(std::size_t block_num,
+boost::optional<Hash> FileHasher::readBlock(std::size_t block_num,
         FileHasher::BlockFile &blockFile) {
     if (block_num < blocks_cache_.size()) {
         return blocks_cache_[block_num];
     }
     if (block_num * block_size_ >= getFileSize() || !blockFile.is_valid()) {
-        return nullopt;
+        return boost::none;
     }
 
     blockFile.shift(blocks_cache_.size());
@@ -48,11 +48,11 @@ std::optional<Hash> FileHasher::readBlock(std::size_t block_num,
     if (block_num < blocks_cache_.size()) {
         return blocks_cache_[block_num];
     } else {
-        return nullopt;
+        return boost::none;
     }
 }
 
-std::optional<Hash> FileHasher::operator[](std::size_t idx) {
+boost::optional<Hash> FileHasher::operator[](std::size_t idx) {
     auto block_file = getBlockFile();
     return readBlock(idx, block_file);
 }
@@ -73,7 +73,7 @@ bool operator==(FileHasher &lhs, FileHasher &rhs) {
     auto lsh_bfh = lhs.getBlockFile();
     auto rsh_bfh = rhs.getBlockFile();
     for (size_t i = 0;
-        lhs.readBlock(i, lsh_bfh).has_value() && rhs.readBlock(i, rsh_bfh).has_value();
+        lhs.readBlock(i, lsh_bfh) && rhs.readBlock(i, rsh_bfh);
         ++i) {
         if (*lhs[i] != *rhs[i]) {
             res = false;

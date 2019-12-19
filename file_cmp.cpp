@@ -1,7 +1,7 @@
 #include "file_cmp.h"
 
-#include <utility>
-#include <unordered_map>
+#include <boost/move/utility.hpp>
+#include <boost/unordered_map.hpp>
 
 //# define TEST
 
@@ -9,14 +9,15 @@
 #include <iostream>
 #endif
 
-using namespace std;
+//using namespace std;
 
 CompareFiles::DuplicateList CompareFiles::compare(const std::vector<std::string> &files) {
     if (files.size() < 2) {
         return {};
     }
 
-    unordered_map<size_t, vector<pair<int, FileHasher>>> size_to_filehash{};
+    boost::unordered_map<size_t,
+        boost::container::vector<pair<int, FileHasher>>> size_to_filehash{};
     DuplicateGroup empty_files{};
     DuplicateList duplicates{};
 
@@ -57,7 +58,7 @@ CompareFiles::DuplicateList CompareFiles::compare(const std::vector<std::string>
     }
     // add empty file list
     if (!empty_files.empty()) {
-        duplicates.push_back(move(empty_files));
+        duplicates.push_back(boost::move(empty_files));
     }
     return duplicates;
 }
