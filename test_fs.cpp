@@ -1,33 +1,17 @@
 #define BOOST_TEST_MODULE bayan_test_module
 #include <boost/test/unit_test.hpp>
 
-#include <sstream>
 #include <array>
 #include <vector>
 #include <iostream>
 #include <cstdint>
 
 #include "hasher.h"
+#include "file_cmp.h"
 
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE(bayan_test_suite)
-
-//	BOOST_AUTO_TEST_CASE(test_bin_reading) {
-//        stringstream ss("0123345", ios_base::binary|ios_base::in);
-//        constexpr int BLK_SZE = 2;
-//        array<char, BLK_SZE> block;
-//        fill(block.begin(), block.end(), 0);
-//        while(ss.read(block.data(), BLK_SZE)) {
-//            cerr << hex << int16_t(block[0]) << " " << int16_t(block[1]) << endl;
-//        }
-//        while (ss) {
-//            char symb;
-//            ss.read(&symb, 1);
-//            cerr << hex << int16_t(symb) << " ";
-//        }
-//        cerr << endl;
-//	}
 
     BOOST_AUTO_TEST_CASE(test_hash) {
         const vector<char> v1{'1','1','2'};
@@ -61,5 +45,49 @@ BOOST_AUTO_TEST_SUITE(bayan_test_suite)
             BOOST_CHECK(h1 == h2);
         }
     }
+
+    BOOST_AUTO_TEST_CASE(test_bayan) {
+        auto hasher = makeHasher(HashType::Boost);
+        {
+            vector<string> files{"tests/test1_1.txt", "tests/test1_2.txt"};
+            CompareFiles fileComparator(3, *hasher);
+            auto res = fileComparator.compare(files);
+            BOOST_CHECK(res.empty());
+        }
+        {
+            vector<string> files{"tests/test2_1.txt", "tests/test2_2.txt"};
+            CompareFiles fileComparator(3, *hasher);
+            auto res = fileComparator.compare(files);
+            BOOST_CHECK(res.empty());
+        }
+        {
+            vector<string> files{"tests/test3_1.txt", "tests/test3_2.txt"};
+            CompareFiles fileComparator(3, *hasher);
+            auto res = fileComparator.compare(files);
+            BOOST_CHECK(res.empty());
+        }
+        {// empty files
+            vector<string> files{"tests/test4_1.txt", "tests/test4_2.txt"};
+            CompareFiles fileComparator(3, *hasher);
+            auto res = fileComparator.compare(files);
+            BOOST_CHECK(res.size() == 1u);
+            BOOST_CHECK(res.at(0).size() == 2u);
+        }
+        {// zero trailing
+            vector<string> files{"tests/test5_1.txt", "tests/test5_2.txt"};
+            CompareFiles fileComparator(3, *hasher);
+            auto res = fileComparator.compare(files);
+            BOOST_CHECK(res.empty());
+        }
+        {// equal files
+            vector<string> files{"tests/test1_1.txt", "tests/test2_1.txt",
+                                 "tests/test3_1.txt", "tests/test5_1.txt"};
+            CompareFiles fileComparator(3, *hasher);
+            auto res = fileComparator.compare(files);
+            BOOST_CHECK(res.size() == 1u);
+            BOOST_CHECK(res.at(0).size() == 3u);
+        }
+    }
+
 
 BOOST_AUTO_TEST_SUITE_END()
