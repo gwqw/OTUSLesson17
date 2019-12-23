@@ -6,26 +6,23 @@ using namespace std;
 
 // Block File
 void FileHasher::BlockFile::shift(std::size_t blocks_num) {
-    if (blocks_num > readed_blocks) {
-        std::size_t new_pos = (blocks_num - readed_blocks) * block_size_;
+    if (blocks_num > readed_blocks_) {
+        std::size_t new_pos = (blocks_num - readed_blocks_) * block_size_;
         in_.seekg(new_pos);
-        readed_blocks = blocks_num;
+        readed_blocks_ = blocks_num;
     }
 }
 
 FileHasher::Block FileHasher::BlockFile::read() {
     Block b(block_size_);
     std::fill(b.begin(), b.end(), 0);
-    if ((readed_blocks + 1) * block_size_ < file_size_) {
+    if ((readed_blocks_ + 1) * block_size_ <= file_size_) {
         in_.read(b.data(), block_size_);
     } else {
-        std::size_t readed = 0;
-        while (in_ && readed < block_size_) {
-            in_.read(b.data() + readed, 1);
-            ++readed;
-        }
-        ++readed_blocks;
+        size_t to_read_size = (readed_blocks_ + 1) * block_size_ - file_size_;
+        in_.read(b.data(), to_read_size);
     }
+    ++readed_blocks_;
     return b;
 }
 

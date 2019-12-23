@@ -32,7 +32,7 @@ class FileHasher {
         std::size_t block_size_ = 0;
         std::size_t file_size_ = 0;
         std::ifstream in_;
-        std::size_t readed_blocks = 0;
+        std::size_t readed_blocks_ = 0;
     };
 
 public:
