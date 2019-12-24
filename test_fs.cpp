@@ -50,42 +50,56 @@ BOOST_AUTO_TEST_SUITE(bayan_test_suite)
         auto hasher = makeHasher(HashType::Boost);
         {
             vector<string> files{"tests/test1_1.txt", "tests/test1_2.txt"};
-            CompareFiles fileComparator(3, *hasher);
+            CompareFiles fileComparator(2, *hasher);
             auto res = fileComparator.compare(files);
             BOOST_CHECK(res.empty());
         }
         {
             vector<string> files{"tests/test2_1.txt", "tests/test2_2.txt"};
-            CompareFiles fileComparator(3, *hasher);
+            CompareFiles fileComparator(2, *hasher);
             auto res = fileComparator.compare(files);
             BOOST_CHECK(res.empty());
         }
         {
             vector<string> files{"tests/test3_1.txt", "tests/test3_2.txt"};
-            CompareFiles fileComparator(3, *hasher);
+            CompareFiles fileComparator(2, *hasher);
             auto res = fileComparator.compare(files);
             BOOST_CHECK(res.empty());
         }
         {// empty files
             vector<string> files{"tests/test4_1.txt", "tests/test4_2.txt"};
-            CompareFiles fileComparator(3, *hasher);
+            CompareFiles fileComparator(2, *hasher);
             auto res = fileComparator.compare(files);
             BOOST_CHECK(res.size() == 1u);
             BOOST_CHECK(res.at(0).size() == 2u);
         }
         {// zero trailing
             vector<string> files{"tests/test5_1.txt", "tests/test5_2.txt"};
-            CompareFiles fileComparator(3, *hasher);
+            CompareFiles fileComparator(2, *hasher);
             auto res = fileComparator.compare(files);
             BOOST_CHECK(res.empty());
         }
         {// equal files
             vector<string> files{"tests/test1_1.txt", "tests/test2_1.txt",
                                  "tests/test3_1.txt", "tests/test5_1.txt"};
-            CompareFiles fileComparator(3, *hasher);
+            CompareFiles fileComparator(2, *hasher);
             auto res = fileComparator.compare(files);
             BOOST_CHECK(res.size() == 1u);
             BOOST_CHECK(res.at(0).size() == 3u);
+        }
+        {// different sizes
+            vector<string> files{"tests/test7_1.txt", "tests/test7_2.txt"};
+            CompareFiles fileComparator(2, *hasher);
+            auto res = fileComparator.compare(files);
+            BOOST_CHECK(res.empty());
+        }
+        {// 2 equal groups
+            vector<string> files{"tests/test1_1.txt", "tests/test2_1.txt",
+                                 "tests/test6_1.txt", "tests/test6_2.txt"};
+            CompareFiles fileComparator(3, *hasher);
+            auto res = fileComparator.compare(files);
+            BOOST_CHECK(res.size() == 2u);
+            BOOST_CHECK(res.at(0).size() == 2u);
         }
     }
 

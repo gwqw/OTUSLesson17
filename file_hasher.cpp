@@ -16,6 +16,7 @@ void FileHasher::BlockFile::open() {
 void FileHasher::BlockFile::close() {
     if (in_.is_open()) {
         in_.close();
+        readed_blocks_ = 0;
     }
 }
 

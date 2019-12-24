@@ -63,7 +63,6 @@ public:
     void closeBlockFile() {
         bfile_.close();
     }
-
 private:
     std::string filename_;
     std::size_t block_size_ = 1;
