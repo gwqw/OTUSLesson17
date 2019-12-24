@@ -20,6 +20,7 @@ set(SOURCE
         file_cmp.cpp file_cmp.h
         file_utils.cpp file_utils.h
         hasher.cpp hasher.h
+        parse_command_options.cpp parse_command_options.h
 )
 set(EXE_SOURCE main.cpp ${SOURCE})
 set(TEST_SOURCE test_fs.cpp ${SOURCE})

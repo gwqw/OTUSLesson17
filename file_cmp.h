@@ -4,6 +4,7 @@
 #include <vector>
 #include <boost/unordered_set.hpp>
 #include <boost/container/vector.hpp>
+#include <iostream>
 
 #include "file_hasher.h"
 #include "hasher.h"
@@ -19,3 +20,5 @@ private:
     std::size_t block_size_ = 1;
     IHasher& hasher_;
 };
+
+std::ostream& operator<<(std::ostream& out, const CompareFiles::DuplicateList& dupList);

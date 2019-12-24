@@ -63,3 +63,18 @@ CompareFiles::DuplicateList CompareFiles::compare(const std::vector<std::string>
     return duplicates;
 }
 
+
+std::ostream& operator<<(std::ostream& out, const CompareFiles::DuplicateList& dupList) {
+    bool is_first = true;
+    for (const auto& file_set : dupList) {
+        if (is_first) {
+            is_first = false;
+        } else {
+            out << '\n';
+        }
+        for (const auto& f : file_set) {
+            out << f << '\n';
+        }
+    }
+    return out;
+}
