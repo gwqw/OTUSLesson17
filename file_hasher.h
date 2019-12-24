@@ -54,9 +54,6 @@ public:
     // getters
     [[nodiscard]] const std::string& getFileName() const {return filename_;}
     std::size_t getFileSize();
-    BlockFile getBlockFile() {
-        return BlockFile(filename_, block_size_, getFileSize());
-    }
     void openBlockFile() {
         bfile_.open();
     }

@@ -54,7 +54,7 @@ boost::optional<Hash> FileHasher::readBlock(std::size_t block_num) {
         return boost::none;
     }
 
-    bfile_.open();
+    openBlockFile();
     bfile_.shift(blocks_cache_.size());
     //blocks_cache_.reserve(block_num + 1);
     while (blocks_cache_.size() <= block_num && bfile_.is_valid()) {
