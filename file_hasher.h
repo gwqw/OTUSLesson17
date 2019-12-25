@@ -6,6 +6,7 @@
 #include <boost/optional.hpp>
 
 #include "hasher.h"
+#include "file_utils.h"
 
 using namespace std;
 
@@ -14,21 +15,23 @@ class FileHasher {
 
     class BlockFile {
     public:
-        BlockFile(const std::string& filename, std::size_t block_size, std::size_t file_size)
-                : filename_(filename), block_size_(block_size), file_size_(file_size)
-        {}
+        BlockFile(std::string filename, std::size_t block_size)
+            : filename_(std::move(filename)), block_size_(block_size)
+        {
+            file_size_ = get_file_size(filename_);
+        }
 
         void open();
-
         void close();
 
-        void shift(std::size_t blocks_num);
-
         bool is_valid() const { return static_cast<bool>(in_);}
-
+        void shift(std::size_t blocks_num);
         Block read();
+        // getters
+        const std::string& getFileName() const {return filename_;}
+        std::size_t getFileSize() const { return file_size_;}
     private:
-        const std::string filename_; // kakaya-to srannaya magiya i nelzya hranit' scylku na FileHasher::filename_, ona invalidiruetsya, ne razobralsya v chem delo, kopiruem po-starinke
+        std::string filename_;
         std::size_t block_size_ = 0;
         std::size_t file_size_ = 0;
         std::ifstream in_;
@@ -37,8 +40,8 @@ class FileHasher {
 
 public:
     explicit FileHasher(std::string filename, std::size_t block_size, IHasher& hasher)
-        : filename_(std::move(filename)), block_size_(block_size), hasher_(hasher),
-        bfile_(filename_, block_size, getFileSize())
+        : block_size_(block_size), hasher_(hasher),
+        bfile_(std::move(filename), block_size)
     {
         if (block_size_ == 0) {
             throw invalid_argument("Block size can't be zero");
@@ -52,8 +55,8 @@ public:
     boost::optional<Hash> operator[](std::size_t idx);
     boost::optional<Hash> readBlock(std::size_t block_num);
     // getters
-    [[nodiscard]] const std::string& getFileName() const {return filename_;}
-    std::size_t getFileSize();
+    [[nodiscard]] const std::string& getFileName() const {return bfile_.getFileName();}
+    std::size_t getFileSize() const;
     void openBlockFile() {
         bfile_.open();
     }
@@ -61,11 +64,9 @@ public:
         bfile_.close();
     }
 private:
-    std::string filename_;
     std::size_t block_size_ = 1;
     std::vector<Hash> blocks_cache_;
     IHasher& hasher_;
-    boost::optional<std::size_t> file_size_;
     BlockFile bfile_;
 };
 

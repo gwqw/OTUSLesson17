@@ -1,7 +1,5 @@
 #include "file_hasher.h"
 
-#include "file_utils.h"
-
 using namespace std;
 
 // Block File
@@ -72,12 +70,8 @@ boost::optional<Hash> FileHasher::operator[](std::size_t idx) {
     return readBlock(idx);
 }
 
-std::size_t FileHasher::getFileSize() {
-    if (file_size_) {
-        return *file_size_;
-    }
-    file_size_ = get_file_size(filename_);
-    return *file_size_;
+std::size_t FileHasher::getFileSize() const {
+    return bfile_.getFileSize();
 }
 
 bool operator==(FileHasher &lhs, FileHasher &rhs) {
